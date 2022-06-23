@@ -1,0 +1,28 @@
+mini gestionale da linea di comando per scuola di corsi
+
+package school.model 
+    - classe Corso attributi: long id, String title, int numeroOre, Area area, Level level
+    - classe EdizioneCorso attributi: long id, Corso corso, localdate dataInizo, localdate dataFine, 
+                                    double costo, Istruttore Istruttore
+    - enum Area membri: grafica, office, development
+    - enum Level membri: basic, advanced, guru
+    - classe Istruttore attributi: long id, String name, String cognome, localdate dataDiNascita, String email
+                                    ArrayList<Area> Aree,
+package school.ui
+    - classe Console: input/output utente, start: presentare menu all'utente, ricevere input (usare Scanner)
+                    - metodi: 
+                            - stampare lista tutti i corsi
+                            - stampare tutte le edizioni di un corso di un id input
+                            - stampare lista tutti i corsi il cui titolo contiene stringa in input
+                            - stampare lista tutti istruttori che sono associati ad un'edizione corso 
+                                in un area input e livello input
+                            - stampare lista tutti istruttori nati dopo data input e specializzati in 
+                            almeno 2 Aree
+                            - inserire nuovo istruttore
+                            - assegnazione di un istruttore con id input ad un edizione input 
+                                anche sovrascrivendo l'istruttore attuale
+package school.data
+    - classe SchoolRepository: contenere tutti i dati in una o più strutture separate
+                            per ogni funzionalità della console ci deve essere un metodo su repository 
+                            per fornire le informazioni richieste
+
