@@ -1,6 +1,7 @@
 package main.school.model;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,6 +23,13 @@ public class Instructor {
     public boolean isBornAfter (LocalDate date)
     {
         return this.dob.isAfter(date);
+    }
+    public boolean isMajorThan(int age) {
+        return getAge()>=age;
+    }
+    private int getAge (){
+        LocalDate now = LocalDate.now();
+        return Period.between(dob, now).getYears();
     }
     public boolean isSpecializedInMultipleSectors () {
         return this.specialization.size()>1;
@@ -85,5 +93,17 @@ public class Instructor {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Instructor{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", dob=" + dob +
+                ", email='" + email + '\'' +
+                ", specialization=" + specialization +
+                '}';
     }
 }

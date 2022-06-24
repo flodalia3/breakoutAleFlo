@@ -1,13 +1,13 @@
-package main.school.data;
+package main.school.data.abstractions;
 
+import main.school.data.DataException;
 import main.school.model.Course;
-import main.school.model.CourseEdition;
 
 import java.util.List;
 
 public interface CourseRepository {
-    void addCourseToRepo(Course course)throws DataException;
-    void addCourseEditionToRepo(CourseEdition CourseEdition)throws DataException;
+    void addCourse(Course course)throws DataException;
+
     List<Course> getCoursesByTitleLike(String title) throws DataException;
     List<Course> getAllCourses() throws DataException;
 }

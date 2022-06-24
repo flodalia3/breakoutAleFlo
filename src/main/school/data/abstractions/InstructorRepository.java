@@ -1,5 +1,6 @@
-package main.school.data;
+package main.school.data.abstractions;
 
+import main.school.data.DataException;
 import main.school.model.Instructor;
 import main.school.model.Level;
 import main.school.model.Sector;
@@ -10,15 +11,15 @@ import java.util.Optional;
 
 public interface InstructorRepository {
 
-    List<Instructor> getInstructorFromSectorAndLevel(Sector sector, Level level) throws DataException;
-
+    boolean instructorExists(long idInstructor);
     List<Instructor> getInstructorsBornAfter(LocalDate date)throws DataException;
 
     void addInstructor(Instructor instructor) throws DataException;
 
-    void addInstructorToRepo(Instructor Instructor)throws DataException;
 
     //scatoletta che forse contiene o meno un Instructor
     Optional<Instructor> findInstructorById (long instructorId);
+
+    List<Instructor> findByAgeGreaterThenAndMoreOneSpecialization (int age);
 
 }

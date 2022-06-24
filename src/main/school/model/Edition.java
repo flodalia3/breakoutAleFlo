@@ -2,7 +2,7 @@ package main.school.model;
 
 import java.time.LocalDate;
 
-public class CourseEdition {
+public class Edition {
     private long id;
     private Course course;
     private LocalDate startDate;
@@ -10,8 +10,8 @@ public class CourseEdition {
     private double cost;
     private Instructor instructor;
 
-    public CourseEdition(long id, Course course, LocalDate startDate, LocalDate endDate, double cost,
-            Instructor instructor) {
+    public Edition(long id, Course course, LocalDate startDate, LocalDate endDate, double cost,
+                   Instructor instructor) {
         this.id = id;
         this.course = course;
         this.startDate = startDate;
