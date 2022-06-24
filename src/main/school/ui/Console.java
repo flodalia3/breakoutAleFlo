@@ -2,7 +2,7 @@ package main.school.ui;
 
 import java.util.Scanner;
 
-import main.school.data.SchoolRepository;
+import main.school.data.InMemorySchoolRepository;
 import main.school.model.Course;
 import main.school.model.CourseEdition;
 import main.school.model.Instructor;
@@ -11,7 +11,7 @@ import main.school.model.Sector;
 
 public class Console {
     public Scanner sc = new Scanner(System.in);
-    SchoolRepository schoolRepository = new SchoolRepository();
+    InMemorySchoolRepository schoolRepository = new InMemorySchoolRepository();
 
     public void run() {
         while (true) {
@@ -133,6 +133,7 @@ public class Console {
     }
 
     private void addInstructor() {
+
     }
 
     private void assignInstructorToCourseEdition() {

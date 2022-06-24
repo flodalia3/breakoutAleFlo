@@ -2,6 +2,7 @@ package main.school.model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 public class Instructor {
     private long id;
@@ -18,7 +19,13 @@ public class Instructor {
         this.email = email;
         this.specialization = specialization;
     }
-
+    public boolean isBornAfter (LocalDate date)
+    {
+        return this.dob.isAfter(date);
+    }
+    public boolean isSpecializedInMultipleSectors () {
+        return this.specialization.size()>1;
+    }
     public List<Sector> getSpecialization() {
         return specialization;
     }
@@ -65,5 +72,18 @@ public class Instructor {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Instructor that = (Instructor) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
