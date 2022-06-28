@@ -4,10 +4,12 @@ import main.school.data.DataException;
 import main.school.model.Course;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CourseRepository {
     void addCourse(Course course)throws DataException;
-
-    List<Course> getCoursesByTitleLike(String title) throws DataException;
-    List<Course> getAllCourses() throws DataException;
+    Iterable<Course> getCoursesByTitleLike(String title) throws DataException;
+    Iterable<Course> getAll() throws DataException;
+    Optional<Course> findByID(long idCourse);
+    void clear();
 }

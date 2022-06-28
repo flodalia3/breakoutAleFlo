@@ -14,11 +14,26 @@ public class Instructor {
     private List<Sector> specialization;
 
     public Instructor(String name, String lastname, LocalDate dob, String email, List<Sector> specialization) {
+        this(0L, name, lastname, dob, email, specialization);
+    }
+    public Instructor (long id, String name, String lastname, LocalDate dob, String email, List<Sector> specialization) {
+        this.id = id;
         this.name = name;
         this.lastname = lastname;
         this.dob = dob;
         this.email = email;
         this.specialization = specialization;
+    }
+    public Instructor () {
+
+    }
+    private String specializationToString () {
+        String spec = "";
+        for (Sector e :specialization) {
+            spec =  e.name() + ", ";
+            return spec;
+        }
+        return spec;
     }
     public boolean isBornAfter (LocalDate date)
     {

@@ -20,6 +20,10 @@ public class Edition {
         this.instructor = instructor;
     }
 
+    public String getData () {
+        return  id + ", " + course.getTitle() + ", " + startDate.toString() + ", " + endDate.toString() + ", " +
+                cost+ ", " + instructor.getName();
+    }
     @Override
     public String toString() {
         return "Edition id: " + id + " Course title: " + course.getTitle() + " Instructor: " + instructor.getId() + " "

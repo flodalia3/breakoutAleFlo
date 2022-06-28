@@ -10,12 +10,13 @@ import main.school.model.Sector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class InMemoryCourseRepository implements CourseRepository {
 
-    private static long courseId;
+    protected static long courseId;
 
-    private static HashMap<Long, Course> repoCourses = new HashMap<>();
+    protected static HashMap<Long, Course> repoCourses = new HashMap<>();
 
     @Override
     public void addCourse(Course course) throws DataException {
@@ -24,9 +25,8 @@ public class InMemoryCourseRepository implements CourseRepository {
     }
 
 
-
     @Override
-    public List<Course> getCoursesByTitleLike(String title) throws DataException {
+    public Iterable<Course> getCoursesByTitleLike(String title) throws DataException {
         List<Course> courses = new ArrayList<>();
         for (Course aCourse : repoCourses.values()) {
             if (aCourse.getTitle().toLowerCase().contains(title.toLowerCase())) {
@@ -37,7 +37,19 @@ public class InMemoryCourseRepository implements CourseRepository {
     }
 
     @Override
-    public List<Course> getAllCourses() throws DataException {
-        return new ArrayList<Course>(repoCourses.values());
+    public Iterable<Course> getAll() throws DataException {
+        return repoCourses.values();
     }
+
+    @Override
+    public Optional<Course> findByID(long idCourse) {
+        Course found = repoCourses.get(idCourse);
+        return found == null? Optional.empty() : Optional.of(found);
+    }
+
+    @Override
+    public void clear() {
+        this.repoCourses.clear();
+    }
+
 }

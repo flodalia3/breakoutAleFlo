@@ -10,7 +10,7 @@ import main.school.model.Instructor;
 
 import java.util.Optional;
 
-public class SchoolService implements AbstractSchoolService{
+public class InMemorySchoolService implements AbstractSchoolService{
     private EditionRepository editionRepo;
     private CourseRepository courseRepo;
     private InstructorRepository instructorRepo;
@@ -18,7 +18,7 @@ public class SchoolService implements AbstractSchoolService{
     // stiamo facendo iniezione delle dipendenze per realizzare il pattern Inversione delle Dipendenze
     // guardare video sui design pattern SOLID dello "Zio Bob", in particolare "D" come Dependency Inversion
     // spiegare lunedì...
-    public SchoolService(CourseRepository courseRepo, EditionRepository coursEditionRepo, InstructorRepository instructorRepo) {
+    public InMemorySchoolService(CourseRepository courseRepo, EditionRepository coursEditionRepo, InstructorRepository instructorRepo) {
         this.courseRepo = courseRepo;
         this.editionRepo = coursEditionRepo;
         this.instructorRepo = instructorRepo;
@@ -45,12 +45,33 @@ public class SchoolService implements AbstractSchoolService{
         if(oce.isEmpty()) {
             throw new EntityNotFoundException(String.format("CourseEdition with id %d not found.", courseEditionId), courseEditionId);
         }
-        Optional<Instructor> oi = instructorRepo.findInstructorById(instructorID);
+        Optional<Instructor> oi = instructorRepo.findById(instructorID);
         if(oi.isEmpty()) {
             throw new EntityNotFoundException(String.format("Instructor with id %d not found.", instructorID), instructorID);
         }
         Instructor i = oi.get(); //estrae dall'Optional
         Edition ce = oce.get();
         ce.setInstructor(i);
+    }
+
+    @Override
+    public void commit() throws DataException {
+
+    }
+
+    @Override
+    public void rollBack() throws DataException {
+
+    }
+
+    @Override
+    public Iterable<Instructor> getAllInstructors() throws DataException {
+        return instructorRepo.getAll();
+    }
+
+    @Override
+    public Edition addEdition(Edition edition) throws DataException{
+        editionRepo.addEdition(edition);
+        return edition;
     }
 }

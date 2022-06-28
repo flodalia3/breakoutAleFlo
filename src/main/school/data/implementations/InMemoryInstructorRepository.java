@@ -25,7 +25,7 @@ public class InMemoryInstructorRepository implements InstructorRepository {
     }
 
     @Override
-    public List<Instructor> getInstructorsBornAfter(LocalDate date) throws DataException {
+    public Iterable<Instructor> getInstructorsBornAfter(LocalDate date) throws DataException {
         List<Instructor> instructors = new ArrayList<>();
         for (Instructor instructor : repoInstructors.values()) {
             if (instructor.isBornAfter(date) && instructor.isSpecializedInMultipleSectors())
@@ -33,7 +33,6 @@ public class InMemoryInstructorRepository implements InstructorRepository {
         }
         return instructors;
     }
-
     @Override
     public void addInstructor(Instructor instructor) throws DataException {
         instructor.setId(++instructorId);
@@ -41,16 +40,18 @@ public class InMemoryInstructorRepository implements InstructorRepository {
 
     }
 
-
-
     @Override
-    public Optional<Instructor> findInstructorById(long instructorId) {
-        Instructor i = repoInstructors.get(instructorId);
-        return i!=null?Optional.of(i):Optional.empty();
+    public Iterable<Instructor> getAll() throws DataException {
+        return repoInstructors.values();
     }
 
     @Override
-    public List<Instructor> findByAgeGreaterThenAndMoreOneSpecialization(int age) {
+    public Optional<Instructor> findById(long instructorId) {
+        Instructor i = repoInstructors.get(instructorId);
+        return i!=null?Optional.of(i):Optional.empty();
+    }
+    @Override //nell'override possiamo cambiare il tipo di ritorno per via della covarianza
+    public Iterable<Instructor> findByAgeGreaterThenAndMoreOneSpecialization(int age) {
         List<Instructor> listInstructor = new ArrayList<>();
         for(Instructor i : repoInstructors.values()) {
             if(i.isMajorThan(age)&&i.isSpecializedInMultipleSectors()) {
@@ -58,5 +59,9 @@ public class InMemoryInstructorRepository implements InstructorRepository {
             }
         }
         return listInstructor;
+    }
+    @Override
+    public void clear() {
+        this.repoInstructors.clear();
     }
 }

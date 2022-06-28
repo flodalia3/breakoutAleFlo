@@ -12,6 +12,11 @@ public class InMemoryEditionRepository implements EditionRepository {
     private static HashMap<Long, Edition> repoEditions = new HashMap<>();
 
     @Override
+    public Iterable<Edition> getAll() throws DataException {
+        return repoEditions.values();
+    }
+
+    @Override
     public List<Instructor> getInstructorFromSectorAndLevel(Sector sector, Level level) throws DataException {
         Set<Instructor> es = new HashSet<>();
         for(Edition edition: repoEditions.values()) {
@@ -23,9 +28,9 @@ public class InMemoryEditionRepository implements EditionRepository {
     }
 
     @Override
-    public void addCourseEdition(Edition courseEdition) throws DataException {
-        courseEdition.setId(++editionId);
-        repoEditions.put(courseEdition.getId(), courseEdition);
+    public void addEdition(Edition edition) throws DataException {
+        edition.setId(++editionId);
+        repoEditions.put(edition.getId(), edition);
     }
 
     @Override
@@ -43,5 +48,10 @@ public class InMemoryEditionRepository implements EditionRepository {
     public Optional<Edition> findCourseEditionById(long courseEditionId) {
         Edition ce = repoEditions.get(courseEditionId);
         return ce!=null?Optional.of(ce):Optional.empty();
+    }
+
+    @Override
+    public void clear() {
+        this.repoEditions.clear();
     }
 }

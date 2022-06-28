@@ -8,13 +8,17 @@ import main.school.model.*;
 import main.school.services.AbstractSchoolService;
 
 public class Console {
-    private Scanner sc = new Scanner(System.in);
+    private Scanner sc;
     private AbstractSchoolService schoolService;
 
     public Console(AbstractSchoolService ss) {
+        sc = new Scanner(System.in);
         this.schoolService = ss;
     }
+    public Console() {
+        sc = new Scanner(System.in);
 
+    }
     //    InMemorySchoolRepository schoolRepository = new InMemorySchoolRepository();
     public void start (){
         try {
@@ -50,7 +54,15 @@ public class Console {
                 case "6":
                     assignInstructor ();
                     break;
-
+                case "7":
+                    addNewCourse ();
+                    break;
+                case "8":
+                    printAllInstructors();
+                    break;
+                case "9":
+                    addNewEdition();
+                    break;
                 case "exit":
                     return;
 
@@ -60,6 +72,68 @@ public class Console {
             }
         }
     }
+    // long idCourse, LocalDate startDate, LocalDate endDate, double cost, long idInstructor
+    private void addNewEdition() throws DataException {
+        long idCourse = readInt("Please insert Course id: ");
+        LocalDate startDate = readDate("Please insert a start date: ");
+        LocalDate endDate = readDate( "Please insert a end date: ");
+        double cost = readDouble("Please insert a cost: ");
+        long idInstructor = readInt("Please insert Instructor id: ");
+        Course c = new Course();
+        c.setId(idCourse);
+        Instructor i = new Instructor();
+        i.setId(idInstructor);
+        Edition e = new Edition(0L, c, startDate, endDate, cost, i);
+        schoolService.addEdition(e);
+    }
+
+    private void printAllInstructors() throws DataException {
+        for (Instructor i : schoolService.getInstructorRepository().getAll()
+            //for (Instructor i : schoolService.getAllInstructors()){...} renderebbe il servizio + rumoroso
+                //dovendo scrivere per ogni istruzione CRUD un metodo
+        ) {
+            System.out.println(i);
+        }
+    }
+
+    private void addNewCourse() throws DataException {
+        String title = readLine("Please insert Course title:");
+        int hours = readInt("Please insert Course hours:");
+        Sector sector = readSector();
+        Level level = readLevel();
+        Course c = new Course(title, hours, sector, level);
+        this.schoolService.getCourseRepository().addCourse(c);
+        this.schoolService.commit();
+    }
+    private double readDouble (String prompt) {
+        System.out.println(prompt);
+        return Double.parseDouble(sc.nextLine());
+    }
+    private LocalDate readDate (String prompt) {
+        System.out.println(prompt);
+        return LocalDate.parse(sc.nextLine());
+    }
+    private String readLine (String prompt) {
+        System.out.print(prompt);
+        return sc.nextLine();
+    }
+    private int readInt (String prompt) {
+        System.out.println(prompt);
+        int i = sc.nextInt();
+        sc.nextLine();
+        return i;
+    }
+    private Sector readSector () {
+        System.out.println("Please insert sector (GRAPHICS, OFFICE, DEVELOPMENT)");
+
+        String line = sc.nextLine();
+        return Sector.valueOf(line);
+    }
+    private Level readLevel () {
+        System.out.println("Please insert level (BASIC, ADVANCED, GURU)");
+        String line = sc.nextLine();
+        return Level.valueOf(line);
+    }
     private void assignInstructor () throws DataException {
         System.out.println("Please insert id Instructor: ");
         long instructorId = sc.nextLong();
@@ -68,6 +142,7 @@ public class Console {
         sc.nextLine(); //serve per eliminare il return rimasto in Input buffer
         try{
             schoolService.addOrReplaceInstructorToCourseEdition(editionId, instructorId);
+            schoolService.commit();//dopo aver fatto qualcosa vuole confermare di aver apportato la modifica
             System.out.println("Instructor assigned.");
         }catch (EntityNotFoundException e) {
             System.out.println(e.getMessage());
@@ -75,11 +150,10 @@ public class Console {
         }
     }
     private void printAllCourses() throws DataException {
-        for (Course course : schoolService.getCourseRepository().getAllCourses()) {
+        for (Course course : schoolService.getCourseRepository().getAll()) {
             System.out.println(course.toString());
         }
     }
-
     private void retrieveCourseEditionFromCourseId() throws DataException {
         long id = 0L; //costante long
         boolean isValidId = false;
@@ -87,6 +161,7 @@ public class Console {
             System.out.println("Insert course id (long) to search editions:");
             if (sc.hasNextLong()) {
                 id = sc.nextLong();
+                sc.nextLine();
                 isValidId = true;
             } else {
                 sc.nextLine();
@@ -203,20 +278,20 @@ public class Console {
         } while (sectorsSet.size() < Sector.values().length);
         Instructor i = new Instructor(name, lastname, dob, email, new ArrayList<>(sectorsSet));
         schoolService.getInstructorRepository().addInstructor(i);
+        schoolService.commit();
     }
-
-    private void assignInstructorToCourseEdition() {
-    }
-
     private void menu() {
         System.out.println("Type 0 to print all courses");
         System.out.println("Type 1 to retrieve all course editions for a given course id");
         System.out.println("Type 2 to retrieve all courses that contain a given word in the title");
         System.out.println("Type 3 to retrieve all instructors that teach in a given sector at a given level");
-        System.out.println(
-                "Type 4 to print list of instructors who are born after a certain date and are specialised in two sectors");
+        System.out.println("Type 4 to print list of instructors who are born after a certain date and " +
+                           "are specialised in two sectors");
         System.out.println("Type 5 to add a new instructor");
         System.out.println("Type 6 to assign an instructor to a course edition");
+        System.out.println("Type 7 to add a new Course");
+        System.out.println("Type 8 to show all Instructors");
+        System.out.println("Type 9 to add new Edition");
         System.out.println("Type exit to close the console");
     }
 

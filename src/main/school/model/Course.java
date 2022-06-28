@@ -8,10 +8,17 @@ public class Course {
     private Level level;
 
     public Course(String title, int hours, Sector sector, Level level) {
+        this (0L, title, hours, sector, level);
+    }
+    public Course (long id , String title, int hours, Sector sector, Level level) {
+        this.id = id;
         this.title = title;
         this.hours = hours;
         this.sector = sector;
         this.level = level;
+    }
+    public Course () {
+
     }
 
     @Override

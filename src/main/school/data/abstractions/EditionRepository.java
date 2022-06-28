@@ -6,14 +6,14 @@ import main.school.model.Instructor;
 import main.school.model.Level;
 import main.school.model.Sector;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface EditionRepository {
 
-    public List<Instructor> getInstructorFromSectorAndLevel(Sector sector, Level level) throws DataException;
-    void addCourseEdition(Edition CourseEdition)throws DataException;
-    List<Edition> getEditionsFromCourseId(long idCourse) throws DataException;
+    Iterable<Edition> getAll() throws DataException;
+    public Iterable<Instructor> getInstructorFromSectorAndLevel(Sector sector, Level level) throws DataException;
+    void addEdition(Edition CourseEdition)throws DataException;
+    Iterable<Edition> getEditionsFromCourseId(long idCourse) throws DataException;
     Optional<Edition> findCourseEditionById (long courseEditionId);
-
+    void clear ();
 }
