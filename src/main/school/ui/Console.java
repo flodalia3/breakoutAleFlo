@@ -129,7 +129,8 @@ public class Console {
         this.schoolService.getCourseRepository().addCourse(c);
         this.schoolService.commit();
     }
-    private double readDouble (String prompt) {
+
+    private double readDouble (@SuppressWarnings("all") String prompt)  {
         System.out.println(prompt);
         return Double.parseDouble(sc.nextLine());
     }
@@ -137,7 +138,7 @@ public class Console {
         System.out.println(prompt);
         return LocalDate.parse(sc.nextLine());
     }
-    private String readLine (String prompt) {
+    private String readLine (@SuppressWarnings("all") String prompt) {
         System.out.print(prompt);
         return sc.nextLine();
     }
@@ -331,7 +332,6 @@ public class Console {
 
     public void chooseService(CourseRepository cr, InstructorRepository ir, EditionRepository er) {
         try {
-            AbstractSchoolService asc = null;
             System.out.println("Press m or M to record data in memory, F or f to record on a text file.");
             String response = sc.nextLine();
             while(!(response.equalsIgnoreCase("M") || response.equalsIgnoreCase("F"))) {
@@ -348,7 +348,6 @@ public class Console {
         } catch (DataException e) {
             System.out.println("Unable to initialize data.");
             System.out.println(e.getMessage());
-            return;
         }
     }
 
