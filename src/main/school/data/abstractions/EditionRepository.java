@@ -14,6 +14,6 @@ public interface EditionRepository {
     public Iterable<Instructor> getInstructorFromSectorAndLevel(Sector sector, Level level) throws DataException;
     void addEdition(Edition CourseEdition)throws DataException;
     Iterable<Edition> getEditionsFromCourseId(long idCourse) throws DataException;
-    Optional<Edition> findCourseEditionById (long courseEditionId);
+    Optional<Edition> findEditionById(long courseEditionId);
     void clear ();
 }

@@ -8,10 +8,10 @@ import main.school.model.EntityNotFoundException;
 import main.school.model.Instructor;
 
 public interface AbstractSchoolService {
-    EditionRepository getCourseEditionRepository();
+    EditionRepository getEditionRepository();
     InstructorRepository getInstructorRepository ();
     CourseRepository getCourseRepository ();
-    void addOrReplaceInstructorToCourseEdition (long courseEditionId, long instructorID) throws DataException, EntityNotFoundException;
+    void addOrReplaceInstructorInEdition(long editionId, long instructorID) throws DataException, EntityNotFoundException;
     void commit() throws DataException;
     void rollBack() throws DataException;
     Iterable<Instructor> getAllInstructors() throws DataException;

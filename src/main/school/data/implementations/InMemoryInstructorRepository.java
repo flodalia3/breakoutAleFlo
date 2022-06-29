@@ -51,7 +51,7 @@ public class InMemoryInstructorRepository implements InstructorRepository {
         return i!=null?Optional.of(i):Optional.empty();
     }
     @Override //nell'override possiamo cambiare il tipo di ritorno per via della covarianza
-    public Iterable<Instructor> findByAgeGreaterThenAndMoreOneSpecialization(int age) {
+    public Iterable<Instructor> findOlderThanGivenAgeAndMoreThanOneSpecialization(int age) {
         List<Instructor> listInstructor = new ArrayList<>();
         for(Instructor i : repoInstructors.values()) {
             if(i.isMajorThan(age)&&i.isSpecializedInMultipleSectors()) {

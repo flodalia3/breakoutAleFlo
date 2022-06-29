@@ -19,14 +19,14 @@ public class TextFileSchoolService implements AbstractSchoolService {
     public static final String COURSE_PATH = "./data/myCourses.txt";
     public static final String EDITION_PATH = "./data/myEditions.txt";
     public static final String INSTRUCTOR_PATH = "./data/myInstructor.txt";
-    private EditionRepository editionRepo;
-    private CourseRepository courseRepo;
-    private InstructorRepository instructorRepo;
+    private final EditionRepository editionRepo;
+    private final CourseRepository courseRepo;
+    private final InstructorRepository instructorRepo;
 
-    public TextFileSchoolService(CourseRepository courseRepo, EditionRepository coursEditionRepo,
+    public TextFileSchoolService(CourseRepository courseRepo, EditionRepository editionRepo,
                                  InstructorRepository instructorRepo) throws DataException {
         this.courseRepo = courseRepo;
-        this.editionRepo = coursEditionRepo;
+        this.editionRepo = editionRepo;
         this.instructorRepo = instructorRepo;
 
         //qui l'ordine è importante
@@ -37,7 +37,7 @@ public class TextFileSchoolService implements AbstractSchoolService {
     }
 
     @Override
-    public EditionRepository getCourseEditionRepository() {
+    public EditionRepository getEditionRepository() {
         return this.editionRepo;
     }
 
@@ -52,7 +52,7 @@ public class TextFileSchoolService implements AbstractSchoolService {
     }
 
     @Override
-    public void addOrReplaceInstructorToCourseEdition(long courseEditionId, long instructorID) throws DataException, EntityNotFoundException {
+    public void addOrReplaceInstructorInEdition(long editionId, long instructorID) throws DataException, EntityNotFoundException {
 
     }
     @Override
@@ -94,7 +94,7 @@ public class TextFileSchoolService implements AbstractSchoolService {
     private void readCourseFromFile() throws DataException {
         try (BufferedReader br = new BufferedReader(new FileReader(COURSE_PATH))) {
             this.courseRepo.clear();// svuoto HashMap
-            String s = null;
+            String s;
             while ((s = br.readLine())!= null) {
                 Course c = CourseUtils.fromTextLine(s);
                 this.courseRepo.addCourse(c);
@@ -116,10 +116,10 @@ public class TextFileSchoolService implements AbstractSchoolService {
     private void readEditionFromFile() throws DataException {
         try (BufferedReader br = new BufferedReader(new FileReader(EDITION_PATH))) {
             this.editionRepo.clear();// svuoto l'HashMap
-            String s = null;
+            String s;
             while ((s = br.readLine())!= null) {
-                Edition e = EditionUtils.fromTextLine(s); // qui gli arrivano course ed Instructor farlocchi
-                //dobbiamo prendere dal repository di corso e instructor quelli giusti
+                Edition e = EditionUtils.fromTextLine(s); // qui gli arrivano course e instructor falsi
+                //dobbiamo prendere dal repository di corso e instructor giusti
                 assignCourseAndInstructorToEdition(e);
                 this.editionRepo.addEdition(e);
             }
@@ -144,7 +144,7 @@ public class TextFileSchoolService implements AbstractSchoolService {
             throw new DataException(String.format("edizione corso referenzia un istruttore con id %d inesistente",
                     e.getInstructor().getId()), null);
         }
-        //essendo sicuri di Course e Instructor li possiamo settare nell'Edition
+        //essendo sicuri di Course e Instructor li possiamo settare nella Edition
         e.setCourse(oc.get());
         e.setInstructor(oi.get());
     }
@@ -162,8 +162,8 @@ public class TextFileSchoolService implements AbstractSchoolService {
     private void readInstructorFromFile() throws DataException {
         try (BufferedReader br = new BufferedReader(new FileReader(INSTRUCTOR_PATH))) {
             this.instructorRepo.clear();// svuoto HashMap
-            String s = null;
-            while ((s = br.readLine())!= null) {//s deve contenere tutti i parametri per instanziare un Instructor
+            String s;
+            while ((s = br.readLine())!= null) { //s deve contenere tutti i parametri per istanziare un instructor
                 Instructor i = InstructorUtils.fromTextLine(s);
                 this.instructorRepo.addInstructor(i);
             }

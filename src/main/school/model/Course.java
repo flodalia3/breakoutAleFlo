@@ -23,7 +23,7 @@ public class Course {
 
     @Override
     public String toString() {
-        return "Id: " + id + " Title: " + title + " Duration: " + hours + " Sector" + sector.name() + " Level: "
+        return "Id: " + id + " Title: " + title + " Duration: " + hours + " Sector: " + sector.name() + " Level: "
                 + level.name();
     }
 

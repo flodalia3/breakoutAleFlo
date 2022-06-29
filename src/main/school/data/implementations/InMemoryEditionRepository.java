@@ -45,7 +45,7 @@ public class InMemoryEditionRepository implements EditionRepository {
     }
 
     @Override
-    public Optional<Edition> findCourseEditionById(long courseEditionId) {
+    public Optional<Edition> findEditionById(long courseEditionId) {
         Edition ce = repoEditions.get(courseEditionId);
         return ce!=null?Optional.of(ce):Optional.empty();
     }

@@ -18,14 +18,14 @@ public class InMemorySchoolService implements AbstractSchoolService{
     // stiamo facendo iniezione delle dipendenze per realizzare il pattern Inversione delle Dipendenze
     // guardare video sui design pattern SOLID dello "Zio Bob", in particolare "D" come Dependency Inversion
     // spiegare lunedì...
-    public InMemorySchoolService(CourseRepository courseRepo, EditionRepository coursEditionRepo, InstructorRepository instructorRepo) {
+    public InMemorySchoolService(CourseRepository courseRepo, EditionRepository editionRepo, InstructorRepository instructorRepo) {
         this.courseRepo = courseRepo;
-        this.editionRepo = coursEditionRepo;
+        this.editionRepo = editionRepo;
         this.instructorRepo = instructorRepo;
     }
 
     @Override
-    public EditionRepository getCourseEditionRepository() {
+    public EditionRepository getEditionRepository() {
         return editionRepo;
     }
 
@@ -40,10 +40,10 @@ public class InMemorySchoolService implements AbstractSchoolService{
     }
 
     @Override
-    public void addOrReplaceInstructorToCourseEdition(long courseEditionId, long instructorID) throws DataException, EntityNotFoundException {
-        Optional<Edition> oce = editionRepo.findCourseEditionById(courseEditionId);
+    public void addOrReplaceInstructorInEdition(long editionId, long instructorID) throws DataException, EntityNotFoundException {
+        Optional<Edition> oce = editionRepo.findEditionById(editionId);
         if(oce.isEmpty()) {
-            throw new EntityNotFoundException(String.format("CourseEdition with id %d not found.", courseEditionId), courseEditionId);
+            throw new EntityNotFoundException(String.format("Edition with id %d not found.", editionId), editionId);
         }
         Optional<Instructor> oi = instructorRepo.findById(instructorID);
         if(oi.isEmpty()) {

@@ -2,13 +2,18 @@ package main.school.ui;
 
 import java.time.LocalDate;
 import java.util.*;
-
 import main.school.data.DataException;
+import main.school.data.abstractions.CourseRepository;
+import main.school.data.abstractions.EditionRepository;
+import main.school.data.abstractions.InstructorRepository;
 import main.school.model.*;
 import main.school.services.AbstractSchoolService;
+import main.school.services.InMemorySchoolService;
+import main.school.services.TextFileSchoolService;
+
 
 public class Console {
-    private Scanner sc;
+    private final Scanner sc; //static final
     private AbstractSchoolService schoolService;
 
     public Console(AbstractSchoolService ss) {
@@ -17,9 +22,8 @@ public class Console {
     }
     public Console() {
         sc = new Scanner(System.in);
-
     }
-    //    InMemorySchoolRepository schoolRepository = new InMemorySchoolRepository();
+
     public void start (){
         try {
             run();
@@ -37,30 +41,33 @@ public class Console {
                     printAllCourses();
                     break;
                 case "1":
-                    retrieveCourseEditionFromCourseId();
-                    break;
-                case "2":
-                    retrieveCourseFromTitleLike();
-                    break;
-                case "3":
-                    retrieveInstructorsFromSectorAndLevel();
-                    break;
-                case "4":
-                    retrieveInstructorByAgeAndDoubleSpecialized();
-                    break;
-                case "5":
-                    addInstructor();
-                    break;
-                case "6":
-                    assignInstructor ();
-                    break;
-                case "7":
-                    addNewCourse ();
-                    break;
-                case "8":
                     printAllInstructors();
                     break;
+                case "2":
+                    printAllEditions();
+                    break;
+                case "3":
+                    retrieveEditionFromCourseId();
+                    break;
+                case "4":
+                    retrieveCourseFromTitleLike();
+                    break;
+                case "5":
+                    retrieveInstructorByAgeAndMoreThanOneSpecialization();
+                    break;
+                case "6":
+                    retrieveInstructorsFromSectorAndLevel();
+                    break;
+                case "7":
+                    assignInstructorToEdition();
+                    break;
+                case "8":
+                    addNewCourse();
+                    break;
                 case "9":
+                    addNewInstructor();
+                    break;
+                case "10":
                     addNewEdition();
                     break;
                 case "exit":
@@ -72,13 +79,30 @@ public class Console {
             }
         }
     }
+
+    private void menu() {
+        System.out.println("Type 0 to show all courses");
+        System.out.println("Type 1 to show all instructors");
+        System.out.println("Type 2 to show all editions");
+        System.out.println("Type 3 to show all editions of a course given its id");
+        System.out.println("Type 4 to show all courses that contain a given word in the title");
+        System.out.println("Type 5 to show all instructors born before a certain date and " +
+                "specialised in two sectors");
+        System.out.println("Type 6 to show all instructors that teach in a given sector at a given level");
+        System.out.println("Type 7 to assign an instructor to an edition");
+        System.out.println("Type 8 to add a new course");
+        System.out.println("Type 9 to add a new instructor");
+        System.out.println("Type 10 to add a new edition");
+        System.out.println("Type exit to close the console");
+    }
+
     // long idCourse, LocalDate startDate, LocalDate endDate, double cost, long idInstructor
     private void addNewEdition() throws DataException {
-        long idCourse = readInt("Please insert Course id: ");
-        LocalDate startDate = readDate("Please insert a start date: ");
-        LocalDate endDate = readDate( "Please insert a end date: ");
-        double cost = readDouble("Please insert a cost: ");
-        long idInstructor = readInt("Please insert Instructor id: ");
+        long idCourse = readInt("Please insert course id: ");
+        LocalDate startDate = readDate("Please insert starting date: ");
+        LocalDate endDate = readDate( "Please insert ending date: ");
+        double cost = readDouble("Please insert cost: ");
+        long idInstructor = readInt("Please insert instructor id: ");
         Course c = new Course();
         c.setId(idCourse);
         Instructor i = new Instructor();
@@ -97,8 +121,8 @@ public class Console {
     }
 
     private void addNewCourse() throws DataException {
-        String title = readLine("Please insert Course title:");
-        int hours = readInt("Please insert Course hours:");
+        String title = readLine("Please insert course title:");
+        int hours = readInt("Please insert course hours:");
         Sector sector = readSector();
         Level level = readLevel();
         Course c = new Course(title, hours, sector, level);
@@ -124,24 +148,24 @@ public class Console {
         return i;
     }
     private Sector readSector () {
-        System.out.println("Please insert sector (GRAPHICS, OFFICE, DEVELOPMENT)");
+        System.out.println("Please insert sector (GRAPHICS, OFFICE, DEVELOPMENT): ");
 
         String line = sc.nextLine();
         return Sector.valueOf(line);
     }
     private Level readLevel () {
-        System.out.println("Please insert level (BASIC, ADVANCED, GURU)");
+        System.out.println("Please insert level (BASIC, ADVANCED, GURU): ");
         String line = sc.nextLine();
         return Level.valueOf(line);
     }
-    private void assignInstructor () throws DataException {
-        System.out.println("Please insert id Instructor: ");
+    private void assignInstructorToEdition() throws DataException {
+        System.out.println("Please insert instructor id: ");
         long instructorId = sc.nextLong();
-        System.out.println("Please insert course edition id: ");
+        System.out.println("Please insert edition id: ");
         long editionId = sc.nextLong();
         sc.nextLine(); //serve per eliminare il return rimasto in Input buffer
         try{
-            schoolService.addOrReplaceInstructorToCourseEdition(editionId, instructorId);
+            schoolService.addOrReplaceInstructorInEdition(editionId, instructorId);
             schoolService.commit();//dopo aver fatto qualcosa vuole confermare di aver apportato la modifica
             System.out.println("Instructor assigned.");
         }catch (EntityNotFoundException e) {
@@ -154,29 +178,37 @@ public class Console {
             System.out.println(course.toString());
         }
     }
-    private void retrieveCourseEditionFromCourseId() throws DataException {
+
+    private void printAllEditions() throws DataException {
+        for (Edition e : schoolService.getEditionRepository().getAll()) {
+            System.out.println(e.toString());
+        }
+    }
+
+    private void retrieveEditionFromCourseId() throws DataException {
         long id = 0L; //costante long
         boolean isValidId = false;
         do {
-            System.out.println("Insert course id (long) to search editions:");
+            System.out.println("Insert course id:");
             if (sc.hasNextLong()) {
                 id = sc.nextLong();
                 sc.nextLine();
                 isValidId = true;
             } else {
                 sc.nextLine();
-                System.out.println("Enter a valid Long value");
+                System.out.println("Invalid input, try again!");
             }
         } while (!isValidId);
-        for (Edition courseEdition : schoolService.getCourseEditionRepository().getEditionsFromCourseId(id)) {
-            System.out.println(courseEdition.toString());
+        for (Edition Edition : schoolService.getEditionRepository().getEditionsFromCourseId(id)) {
+            System.out.println(Edition.toString());
         }
 
     }
 
     private void retrieveCourseFromTitleLike() throws DataException {
-        System.out.println("Insert word to find relative courses:");
+        System.out.println("Insert word contained in the course's title:");
         String keyword = sc.next();
+        sc.nextLine();
         for (Course course : schoolService.getCourseRepository().getCoursesByTitleLike(keyword)) {
             System.out.println(course.toString());
         }
@@ -188,73 +220,89 @@ public class Console {
         System.out.println("Insert 1 for Office");
         System.out.println("Insert 2 for Development");
         Sector sector = null;
-        switch (sc.next()) {
-            case "0":
-                sector = Sector.GRAPHICS;
-                break;
-            case "1":
-                sector = Sector.OFFICE;
-                break;
-            case "2":
-                sector = Sector.DEVELOPMENT;
-                break;
-
-            default:
-                System.out.println("Invalid input, try again you dumb bitch");
-                retrieveInstructorsFromSectorAndLevel();
-                return ;
+        boolean f1 = false;
+        boolean f2 = false;
+        while(!f1) {
+            switch (sc.nextLine()) {
+                case "0" -> {
+                    sector = Sector.GRAPHICS;
+                    f1 = true;
+                }
+                case "1" -> {
+                    sector = Sector.OFFICE;
+                    f1 = true;
+                }
+                case "2" -> {
+                    sector = Sector.DEVELOPMENT;
+                    f1 = true;
+                }
+                default -> {
+                    System.out.println("Invalid input, try again!");
+                    System.out.println("Insert 0 for Graphics");
+                    System.out.println("Insert 1 for Office");
+                    System.out.println("Insert 2 for Development");
+                }
+            }
         }
+
         System.out.println("Insert 0 for Basic");
         System.out.println("Insert 1 for Advanced");
         System.out.println("Insert 2 for Guru");
         Level level = null;
-        switch (sc.next()) {
-            case "0":
-                level = Level.BASIC;
-                break;
-            case "1":
-                level = Level.ADVANCED;
-                break;
-            case "2":
-                level = Level.GURU;
-                break;
-            default:
-                System.out.println("Invalid input, try again you dumb bitch");
-                retrieveInstructorsFromSectorAndLevel();
-                return ;
+        while(!f2) {
+            switch (sc.nextLine()) {
+                case "0" -> {
+                    level = Level.BASIC;
+                    f2 = true;
+                }
+                case "1" -> {
+                    level = Level.ADVANCED;
+                    f2 = true;
+                }
+                case "2" -> {
+                    level = Level.GURU;
+                    f2 = true;
+                }
+                default -> {
+                    System.out.println("Invalid input, try again!");
+                    System.out.println("Insert 0 for Basic");
+                    System.out.println("Insert 1 for Advanced");
+                    System.out.println("Insert 2 for Guru");
+                }
+            }
         }
 
-        for (Instructor instructor : schoolService.getCourseEditionRepository().getInstructorFromSectorAndLevel(sector, level)) {
+
+        for (Instructor instructor : schoolService.getEditionRepository().getInstructorFromSectorAndLevel(sector, level)) {
             System.out.println(instructor);
         }
     }
 
-    private void retrieveInstructorByAgeAndDoubleSpecialized() {
-        System.out.println("what is the minimum instractor age: ");
+    private void retrieveInstructorByAgeAndMoreThanOneSpecialization() {
+        System.out.println("How old should the instructor be, at the very least?");
         int age = sc.nextInt();
         sc.nextLine();
-        for (Instructor instructor: schoolService.getInstructorRepository().findByAgeGreaterThenAndMoreOneSpecialization(age)) {
+        for (Instructor instructor: schoolService.getInstructorRepository().findOlderThanGivenAgeAndMoreThanOneSpecialization(age)) {
             System.out.println(instructor);
         }
 
     }
 
-    private void addInstructor() throws DataException {
-        System.out.println("Please insert Instructor name: ");
+    private void addNewInstructor() throws DataException {
+        System.out.println("Please insert instructor name: ");
         String name = sc.nextLine();
-        System.out.println("Please insert Instructorn lastname: ");
+        System.out.println("Please insert instructor last name: ");
         String lastname = sc.nextLine();
-        System.out.println("Please insert Date of Born Instructor 'yyyy-mm-dd': ");
+        System.out.println("Please insert instructor date of birth ('yyyy-mm-dd' format): ");
         String dateString = sc.nextLine();
         LocalDate dob = LocalDate.parse(dateString);
-        System.out.println("Please insert Instructor email: ");
+        System.out.println("Please insert instructor email: ");
         String email = sc.nextLine();
-        boolean hasMoreSpecialization = true;
         Set<Sector> sectorsSet = new HashSet<>();
         outer: do {
-            System.out.println("Please insert Specialization (g: graphics, d: development, o: office): , q: quit");
+            System.out.println("Please insert specialization (g: graphics, d: development, o: office): , q: quit");
             String answer = sc.nextLine();
-            Sector s = null;
+            Sector s;
             switch (answer) {
                 case "g":
                     s = Sector.GRAPHICS;
@@ -268,31 +316,41 @@ public class Console {
                 case "q":
                     break outer;
                 default:
-                    System.out.println("Invalid response");
+                    System.out.println("Invalid input, try again!");
                     continue;
             }
             boolean wasAbsent = sectorsSet.add(s);
             if (!wasAbsent) {
-                System.out.println("You can't add the same specialization twiece.");
+                System.out.println("You cannot add the same specialization twice!");
             }
         } while (sectorsSet.size() < Sector.values().length);
         Instructor i = new Instructor(name, lastname, dob, email, new ArrayList<>(sectorsSet));
         schoolService.getInstructorRepository().addInstructor(i);
         schoolService.commit();
     }
-    private void menu() {
-        System.out.println("Type 0 to print all courses");
-        System.out.println("Type 1 to retrieve all course editions for a given course id");
-        System.out.println("Type 2 to retrieve all courses that contain a given word in the title");
-        System.out.println("Type 3 to retrieve all instructors that teach in a given sector at a given level");
-        System.out.println("Type 4 to print list of instructors who are born after a certain date and " +
-                           "are specialised in two sectors");
-        System.out.println("Type 5 to add a new instructor");
-        System.out.println("Type 6 to assign an instructor to a course edition");
-        System.out.println("Type 7 to add a new Course");
-        System.out.println("Type 8 to show all Instructors");
-        System.out.println("Type 9 to add new Edition");
-        System.out.println("Type exit to close the console");
+
+    public void chooseService(CourseRepository cr, InstructorRepository ir, EditionRepository er) {
+        try {
+            AbstractSchoolService asc = null;
+            System.out.println("Press m or M to record data in memory, F or f to record on a text file.");
+            String response = sc.nextLine();
+            while(!(response.equalsIgnoreCase("M") || response.equalsIgnoreCase("F"))) {
+                System.out.println("Invalid input, try again!");
+                response = sc.nextLine();
+            }
+            if (response.equalsIgnoreCase("M")) {
+                schoolService = new InMemorySchoolService(cr, er, ir);
+            } else {
+                schoolService = new TextFileSchoolService(cr, er, ir);
+            }
+
+
+        } catch (DataException e) {
+            System.out.println("Unable to initialize data.");
+            System.out.println(e.getMessage());
+            return;
+        }
     }
+
 
 }
