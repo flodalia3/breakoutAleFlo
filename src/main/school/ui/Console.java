@@ -174,8 +174,10 @@ public class Console {
             System.out.println("Please try again.");
         }
     }
+
+    //corsi ordinati per id o alfabeticamente (flag per cambiare)
     private void printAllCourses() throws DataException {
-        for (Course course : schoolService.getCourseRepository().getAll()) {
+        for (Course course : schoolService.getCourseRepository().getAll(true)) {
             System.out.println(course.toString());
         }
     }

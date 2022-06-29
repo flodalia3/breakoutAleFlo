@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface CourseRepository {
     void addCourse(Course course)throws DataException;
     Iterable<Course> getCoursesByTitleLike(String title) throws DataException;
-    Iterable<Course> getAll() throws DataException;
+    Iterable<Course> getAll(boolean orderByTitle) throws DataException;
     Optional<Course> findByID(long idCourse);
     void clear();
 }

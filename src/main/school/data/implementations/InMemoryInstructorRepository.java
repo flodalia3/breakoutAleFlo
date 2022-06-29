@@ -2,15 +2,10 @@ package main.school.data.implementations;
 
 import main.school.data.DataException;
 import main.school.data.abstractions.InstructorRepository;
-import main.school.model.Edition;
 import main.school.model.Instructor;
-import main.school.model.Level;
-import main.school.model.Sector;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 public class InMemoryInstructorRepository implements InstructorRepository {
@@ -25,13 +20,19 @@ public class InMemoryInstructorRepository implements InstructorRepository {
     }
 
     @Override
-    public Iterable<Instructor> getInstructorsBornAfter(LocalDate date) throws DataException {
+    public Iterable<Instructor> getInstructorsBornAfterDateAndMultiSpecialized(LocalDate date) throws DataException {
+        return repoInstructors.values().stream()
+                                .filter(i -> i.isBornAfter(date) && i.isSpecializedInMultipleSectors())
+                                .toList();
+        /*
         List<Instructor> instructors = new ArrayList<>();
         for (Instructor instructor : repoInstructors.values()) {
             if (instructor.isBornAfter(date) && instructor.isSpecializedInMultipleSectors())
                 instructors.add(instructor);
         }
         return instructors;
+
+         */
     }
     @Override
     public void addInstructor(Instructor instructor) throws DataException {
@@ -52,6 +53,12 @@ public class InMemoryInstructorRepository implements InstructorRepository {
     }
     @Override //nell'override possiamo cambiare il tipo di ritorno per via della covarianza
     public Iterable<Instructor> findOlderThanGivenAgeAndMoreThanOneSpecialization(int age) {
+        return repoInstructors.values().stream()
+                                        .filter(i -> i.isOlderThan(age)
+                                                && i.isSpecializedInMultipleSectors())
+                                        .toList();
+
+        /*
         List<Instructor> listInstructor = new ArrayList<>();
         for(Instructor i : repoInstructors.values()) {
             if(i.isMajorThan(age)&&i.isSpecializedInMultipleSectors()) {
@@ -59,6 +66,8 @@ public class InMemoryInstructorRepository implements InstructorRepository {
             }
         }
         return listInstructor;
+
+         */
     }
     @Override
     public void clear() {

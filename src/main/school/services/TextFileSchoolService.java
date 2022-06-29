@@ -83,7 +83,7 @@ public class TextFileSchoolService implements AbstractSchoolService {
     private void writeCourseOnFile() throws DataException {
         //br & bw vengono automaticamente chiusi dal try with resources!!!!
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(COURSE_PATH))) {
-            for (Course element : courseRepo.getAll()) {
+            for (Course element : courseRepo.getAll(true)) {
                 //scrivi
                 bw.write(CourseUtils.toTextLine(element) + "\n");
             }

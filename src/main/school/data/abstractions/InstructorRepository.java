@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface InstructorRepository {
 
     boolean instructorExists(long idInstructor);
-    Iterable<Instructor> getInstructorsBornAfter(LocalDate date)throws DataException;
+    Iterable<Instructor> getInstructorsBornAfterDateAndMultiSpecialized(LocalDate date)throws DataException;
     void addInstructor(Instructor instructor) throws DataException;
     Iterable<Instructor> getAll() throws DataException;
     //scatoletta che forse contiene o meno un Instructor

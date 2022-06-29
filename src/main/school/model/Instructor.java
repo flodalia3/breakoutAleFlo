@@ -39,7 +39,7 @@ public class Instructor {
     {
         return this.dob.isAfter(date);
     }
-    public boolean isMajorThan(int age) {
+    public boolean isOlderThan(int age) {
         return getAge()>=age;
     }
     private int getAge (){

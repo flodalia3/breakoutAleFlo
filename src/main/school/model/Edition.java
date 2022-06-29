@@ -31,6 +31,14 @@ public class Edition {
                 + endDate.toString() + " Cost: " + cost;
     }
 
+    public Level getLevel() {
+        return course.getLevel();
+    }
+
+    public Sector getSector() {
+        return course.getSector();
+    }
+
     public Instructor getInstructor() {
         return instructor;
     }

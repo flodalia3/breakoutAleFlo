@@ -6,6 +6,7 @@ import main.school.data.abstractions.EditionRepository;
 import main.school.model.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryEditionRepository implements EditionRepository {
     private long editionId;
@@ -17,14 +18,22 @@ public class InMemoryEditionRepository implements EditionRepository {
     }
 
     @Override
-    public List<Instructor> getInstructorFromSectorAndLevel(Sector sector, Level level) throws DataException {
+    public Set<Instructor> getInstructorFromSectorAndLevel(Sector sector, Level level) throws DataException {
+        return repoEditions.values().stream()
+                             .filter( e -> e.getSector()==sector &&
+                                     e.getLevel().ordinal() >= level.ordinal())
+                             .map(Edition::getInstructor).collect(Collectors.toSet());
+
+        /*
         Set<Instructor> es = new HashSet<>();
         for(Edition edition: repoEditions.values()) {
-            if (edition.getCourse().getSector()==sector && edition.getCourse().getLevel().ordinal()>=level.ordinal()) { // va bene == perchè Sector è enum
+            if (edition.getCourse().getSector()==sector && edition
+            .getCourse().getLevel().ordinal()>=level.ordinal()) {
                 es.add(edition.getInstructor());
             }
         }
         return new ArrayList<Instructor>(es);
+         */
     }
 
     @Override
@@ -35,6 +44,10 @@ public class InMemoryEditionRepository implements EditionRepository {
 
     @Override
     public List<Edition> getEditionsFromCourseId(long idCourse) throws DataException {
+        return repoEditions.values().stream()
+                             .filter(e -> e.getCourse().getId()== idCourse)
+                             .toList();
+        /*
         List<Edition> editionsOfCourse = new ArrayList<>();
         for (Edition aCourseEdition : repoEditions.values()) {
             if (aCourseEdition.getCourse().getId() == idCourse) {
@@ -42,6 +55,7 @@ public class InMemoryEditionRepository implements EditionRepository {
             }
         }
         return editionsOfCourse;
+        */
     }
 
     @Override
