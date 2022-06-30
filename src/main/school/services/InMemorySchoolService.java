@@ -4,6 +4,8 @@ import main.school.data.abstractions.EditionRepository;
 import main.school.data.abstractions.CourseRepository;
 import main.school.data.DataException;
 import main.school.data.abstractions.InstructorRepository;
+import main.school.factory.RepositoryAbstractFactory;
+import main.school.factory.ServiceAbstractFactory;
 import main.school.model.Edition;
 import main.school.model.EntityNotFoundException;
 import main.school.model.Instructor;
@@ -18,6 +20,12 @@ public class InMemorySchoolService implements AbstractSchoolService{
     // stiamo facendo iniezione delle dipendenze per realizzare il pattern Inversione delle Dipendenze
     // guardare video sui design pattern SOLID dello "Zio Bob", in particolare "D" come Dependency Inversion
     // spiegare lunedì...
+    public InMemorySchoolService(){
+        var factory = RepositoryAbstractFactory.getInstance();
+        this.courseRepo = factory.createCourseRepository();
+        this.editionRepo = factory.createEditionRepository();
+        this.instructorRepo = factory.createInstructorRepository();
+    }
     public InMemorySchoolService(CourseRepository courseRepo, EditionRepository editionRepo, InstructorRepository instructorRepo) {
         this.courseRepo = courseRepo;
         this.editionRepo = editionRepo;

@@ -6,6 +6,8 @@ import main.school.data.DataException;
 import main.school.data.abstractions.CourseRepository;
 import main.school.data.abstractions.EditionRepository;
 import main.school.data.abstractions.InstructorRepository;
+import main.school.factory.RepositoryAbstractFactory;
+import main.school.factory.ServiceAbstractFactory;
 import main.school.model.*;
 import main.school.services.AbstractSchoolService;
 import main.school.services.InMemorySchoolService;
@@ -13,15 +15,14 @@ import main.school.services.TextFileSchoolService;
 
 
 public class Console {
-    private final Scanner sc; //static final
+    private static final Scanner sc = new Scanner(System.in); //static final
     private AbstractSchoolService schoolService;
 
     public Console(AbstractSchoolService ss) {
-        sc = new Scanner(System.in);
         this.schoolService = ss;
     }
     public Console() {
-        sc = new Scanner(System.in);
+        this.schoolService = ServiceAbstractFactory.getInstance().createSchoolService();
     }
 
     public void start (){
@@ -332,7 +333,23 @@ public class Console {
         schoolService.commit();
     }
 
-    public void chooseService(CourseRepository cr, InstructorRepository ir, EditionRepository er) {
+    public static void chooseFactories(){
+        System.out.println("Press m or M to record data in memory, F or f to record on a text file.");
+        String response = sc.nextLine();
+        while(!(response.equalsIgnoreCase("M") || response.equalsIgnoreCase("F"))) {
+            System.out.println("Invalid input, try again!");
+            response = sc.nextLine();
+        }
+        if (response.equalsIgnoreCase("M")) {
+            RepositoryAbstractFactory.setType("memory");
+            ServiceAbstractFactory.setType("memory");
+        } else {
+            RepositoryAbstractFactory.setType("memory");
+            ServiceAbstractFactory.setType("text");
+        }
+    }
+
+    public void chooseService(CourseRepository cr, EditionRepository er, InstructorRepository ir) {
         try {
             System.out.println("Press m or M to record data in memory, F or f to record on a text file.");
             String response = sc.nextLine();

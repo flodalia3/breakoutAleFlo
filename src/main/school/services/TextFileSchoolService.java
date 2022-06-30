@@ -7,6 +7,7 @@ import main.school.data.abstractions.InstructorRepository;
 import main.school.data.implementations.CourseUtils;
 import main.school.data.implementations.EditionUtils;
 import main.school.data.implementations.InstructorUtils;
+import main.school.factory.RepositoryAbstractFactory;
 import main.school.model.Course;
 import main.school.model.Edition;
 import main.school.model.EntityNotFoundException;
@@ -22,6 +23,13 @@ public class TextFileSchoolService implements AbstractSchoolService {
     private final EditionRepository editionRepo;
     private final CourseRepository courseRepo;
     private final InstructorRepository instructorRepo;
+
+    public TextFileSchoolService(){
+        var factory = RepositoryAbstractFactory.getInstance();
+        this.courseRepo = factory.createCourseRepository();
+        this.editionRepo = factory.createEditionRepository();
+        this.instructorRepo = factory.createInstructorRepository();
+    };
 
     public TextFileSchoolService(CourseRepository courseRepo, EditionRepository editionRepo,
                                  InstructorRepository instructorRepo) throws DataException {
