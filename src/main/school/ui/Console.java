@@ -358,6 +358,7 @@ public class Console {
                 response = sc.nextLine();
             }
             if (response.equalsIgnoreCase("M")) {
+                //
                 schoolService = new InMemorySchoolService(cr, er, ir);
             } else {
                 schoolService = new TextFileSchoolService(cr, er, ir);

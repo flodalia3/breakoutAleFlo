@@ -72,7 +72,7 @@ public class TextFileSchoolService implements AbstractSchoolService {
     }
     @Override
     public void rollBack() throws DataException {
-
+        //
     }
 
     @Override
