@@ -3,24 +3,23 @@ package main.school.factory;
 import main.school.data.abstractions.CourseRepository;
 import main.school.data.abstractions.EditionRepository;
 import main.school.data.abstractions.InstructorRepository;
-import main.school.data.implementations.InMemoryCourseRepository;
-import main.school.data.implementations.InMemoryEditionRepository;
-import main.school.data.implementations.InMemoryInstructorRepository;
+import main.school.jdbc.implementation.JdbcCourseRepository;
+import main.school.jdbc.implementation.JdbcEditionRepository;
+import main.school.jdbc.implementation.JdbcInstructorRepository;
 
-public class InMemoryRepositoryFactory extends RepositoryAbstractFactory{
-
-
+public class JdbcRepositoryFactory extends RepositoryAbstractFactory {
     @Override
     public CourseRepository createCourseRepository() {
-        return new InMemoryCourseRepository();
+        return new JdbcCourseRepository();
     }
+
     @Override
     public EditionRepository createEditionRepository() {
-        return new InMemoryEditionRepository();
+        return new JdbcEditionRepository();
     }
 
     @Override
     public InstructorRepository createInstructorRepository() {
-        return new InMemoryInstructorRepository();
+        return new JdbcInstructorRepository();
     }
 }

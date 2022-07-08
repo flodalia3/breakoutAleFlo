@@ -5,6 +5,7 @@ import main.school.data.abstractions.CourseRepository;
 import main.school.data.abstractions.EditionRepository;
 import main.school.data.abstractions.InstructorRepository;
 import main.school.data.abstractions.JdbcRepository;
+import main.school.factory.RepositoryAbstractFactory;
 import main.school.model.Edition;
 import main.school.model.EntityNotFoundException;
 import main.school.model.Instructor;
@@ -21,6 +22,21 @@ public class JdbcSchoolService implements AbstractSchoolService {
 
     private Connection conn;
 
+    public JdbcSchoolService() throws DataException {
+        var factory = RepositoryAbstractFactory.getInstance();
+        this.courseRepository = factory.createCourseRepository();
+        this.editionRepository = factory.createEditionRepository();
+        this.instructorRepository = factory.createInstructorRepository();
+        try {
+            this.conn = createConnection();
+            ((JdbcRepository) this.courseRepository).setConn(this.conn);
+            ((JdbcRepository) this.editionRepository).setConn(this.conn);
+            ((JdbcRepository) this.instructorRepository).setConn(this.conn);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DataException("Error to create connection!", e);
+        }
+    }
     public JdbcSchoolService (CourseRepository cr, EditionRepository er, InstructorRepository ir) throws DataException{
         this.courseRepository = cr;
         this.editionRepository = er;
@@ -42,12 +58,10 @@ public class JdbcSchoolService implements AbstractSchoolService {
     public EditionRepository getEditionRepository() {
         return editionRepository;
     }
-
     @Override
     public InstructorRepository getInstructorRepository() {
         return instructorRepository;
     }
-
     @Override
     public CourseRepository getCourseRepository() {
         return courseRepository;

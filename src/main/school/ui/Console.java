@@ -21,8 +21,13 @@ public class Console {
     public Console(AbstractSchoolService ss) {
         this.schoolService = ss;
     }
-    public Console() {
-        this.schoolService = ServiceAbstractFactory.getInstance().createSchoolService();
+    public Console()  {
+        try {
+            this.schoolService = ServiceAbstractFactory.getInstance().createSchoolService();
+        } catch (DataException e) {
+            System.out.println(e.getMessage());
+            System.out.println("Closing program");
+        }
     }
 
     public void start (){
@@ -334,18 +339,21 @@ public class Console {
     }
 
     public static void chooseFactories(){
-        System.out.println("Press m or M to record data in memory, F or f to record on a text file.");
+        System.out.println("Press m or M to record data in memory, F or f to record on a text file, j or J to record on a db.");
         String response = sc.nextLine();
-        while(!(response.equalsIgnoreCase("M") || response.equalsIgnoreCase("F"))) {
+        while(!(response.equalsIgnoreCase("M") || response.equalsIgnoreCase("F") || response.equalsIgnoreCase("J"))) {
             System.out.println("Invalid input, try again!");
             response = sc.nextLine();
         }
         if (response.equalsIgnoreCase("M")) {
             RepositoryAbstractFactory.setType("memory");
             ServiceAbstractFactory.setType("memory");
-        } else {
+        } else if (response.equalsIgnoreCase("F")) {
             RepositoryAbstractFactory.setType("memory");
             ServiceAbstractFactory.setType("text");
+        } else if (response.equalsIgnoreCase("J")) {
+            RepositoryAbstractFactory.setType("jdbc");
+            ServiceAbstractFactory.setType("jdbc");
         }
     }
 

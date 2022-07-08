@@ -4,8 +4,6 @@ import java.sql.Connection;
 
 public abstract class JdbcRepository {
     protected Connection conn;
-
-
     public Connection getConn() {
         return conn;
     }
