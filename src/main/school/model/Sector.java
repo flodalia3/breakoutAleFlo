@@ -4,5 +4,4 @@ public enum Sector {
     GRAPHICS,
     OFFICE,
     DEVELOPMENT
-
 }

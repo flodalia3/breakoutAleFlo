@@ -69,6 +69,12 @@ public class InMemoryInstructorRepository implements InstructorRepository {
 
          */
     }
+
+    @Override // qui può restare vuota l'implementazione
+    public boolean updateInstructor(Instructor i) {
+        return false;
+    }
+
     @Override
     public void clear() {
         this.repoInstructors.clear();

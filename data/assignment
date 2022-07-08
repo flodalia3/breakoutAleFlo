@@ -1,0 +1,15 @@
+creare una nuova istanza dell'AbstractFactory dei repository che crei 3 istanze dei repository specializzate
+in jbdc (Course, Edition, Istructor);
+
+Per Course ed Edition possiamo semplicemente implements interfaccia e lasciare implementazione di default
+(se implementati + punti);
+
+Instructor da implementare correttamente;
+
+70% correttezza impl e pulizia del codice... 30% implementare le funzionalità dei repository attraverso l'uso
+                                                del template pattern
+
+aggiungere metodo boolean updateInstructor (); nell'interfaccia InstructorRepository
+
+la responsabilità del commit/rollback sarà del service non dei repository (punti extra)
+

@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InstructorUtils {
-    public static Instructor fromTextLine (String line) {//line deve contenere tutti i parametri che servono per creare un Instructor
+    public static Instructor fromTextLine (String line) {
+        //line deve contenere tutti i parametri che servono per creare un Instructor
         var token = line.split(",");
-
         //leggiamo la dimensione di Sector per l'istruttore (ottenuto di default)
         int numSpec = Integer.parseInt(token[5]);
         List<Sector> listSect = new ArrayList<>();

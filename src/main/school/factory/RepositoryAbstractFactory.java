@@ -8,7 +8,7 @@ public abstract class RepositoryAbstractFactory {
 
     protected static String type;
 
-    public static RepositoryAbstractFactory getInstance(){
+    public static RepositoryAbstractFactory getInstance() {
         if(type.equals("memory")){
             return new InMemoryRepositoryFactory();
         }

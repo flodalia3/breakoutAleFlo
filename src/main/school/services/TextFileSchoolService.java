@@ -24,7 +24,7 @@ public class TextFileSchoolService implements AbstractSchoolService {
     private final CourseRepository courseRepo;
     private final InstructorRepository instructorRepo;
 
-    public TextFileSchoolService(){
+    public TextFileSchoolService() {
         var factory = RepositoryAbstractFactory.getInstance();
         this.courseRepo = factory.createCourseRepository();
         this.editionRepo = factory.createEditionRepository();
@@ -41,7 +41,6 @@ public class TextFileSchoolService implements AbstractSchoolService {
         readCourseFromFile();
         readInstructorFromFile();
         readEditionFromFile();
-
     }
 
     @Override
