@@ -335,7 +335,7 @@ public class Console {
         } while (sectorsSet.size() < Sector.values().length);
         Instructor i = new Instructor(name, lastname, dob, email, new ArrayList<>(sectorsSet));
         schoolService.getInstructorRepository().addInstructor(i);
-        schoolService.commit();
+        //schoolService.commit();
     }
 
     public static void chooseFactories(){

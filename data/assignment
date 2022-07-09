@@ -13,3 +13,8 @@ aggiungere metodo boolean updateInstructor (); nell'interfaccia InstructorReposi
 
 la responsabilità del commit/rollback sarà del service non dei repository (punti extra)
 
+
+Conversione data-data locale
+// Date date = Date.valueOf(LocalDate.now());
+// LocalDate localDate = Date.valueOf("2019-01-10").toLocalDate();
+
