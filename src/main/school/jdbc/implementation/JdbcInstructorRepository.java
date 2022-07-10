@@ -17,10 +17,9 @@ import java.util.Optional;
 public class JdbcInstructorRepository extends JdbcRepository implements InstructorRepository {
 
     @Override
-    //da provare
     public boolean instructorExists(long idInstructor) {
-        String query = "SELECT ID" +
-                " FROM INSTRUCTOR" +
+        String query = "SELECT ID " +
+                " FROM INSTRUCTOR " +
                 "WHERE ID = ?";
 
         try(
@@ -44,18 +43,17 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
         }
     }
 
-    //da provare
     @Override
     public Iterable<Instructor> getInstructorsBornAfterDateAndMultiSpecialized(LocalDate date) throws DataException {
-        String query = "SELECT I.ID, I.SNAME, I.SURNAME, I.DOB, I.EMAIL" +
+        String query = "SELECT I.ID, I.SNAME, I.SURNAME, I.DOB, I.EMAIL " +
                 "FROM INSTRUCTOR I JOIN INSTRUCTOR_SECTOR IS_S " +
-                "ON (IS_S.INSTRUCTOR_ID = I.ID)" +
+                "ON (IS_S.INSTRUCTOR_ID = I.ID) " +
                 "JOIN SECTOR S " +
-                "ON (IS_S.SECTOR_ID = S.ID)" +
+                "ON (IS_S.SECTOR_ID = S.ID) " +
                 "WHERE I.DOB > ? " +
-                "GROUP BY I.ID, I.SNAME, I.SURNAME, I.DOB, I.EMAIL" +
+                "GROUP BY I.ID, I.SNAME, I.SURNAME, I.DOB, I.EMAIL " +
                 "HAVING COUNT(S.SNAME) > 1";
-        List<Instructor> instructors;
+        List<Instructor> instructors = new ArrayList<>();
 
         try(
                 PreparedStatement statement = this.conn.prepareStatement(query);
@@ -65,7 +63,6 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
                     try(
                             ResultSet rs = statement.executeQuery(query);
                             ){
-                             instructors = new ArrayList<>();
                              while (rs.next()) {
                                  instructors.add(createInstructor(rs));
                              }
@@ -76,10 +73,10 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
 
         return instructors;
     }
-    //da provare
+
     @Override
     public void addInstructor(Instructor instructor) throws DataException {
-        String query = "INSERT INTO INSTRUCTOR  (ID, SNAME, SURNAME, DOB, EMAIL)" +
+        String query = "INSERT INTO INSTRUCTOR  (ID, SNAME, SURNAME, DOB, EMAIL) " +
                         "VALUES (?, ?, ?, ?, ?)";
 
         String idQuery = "SELECT INSTRUCTOR_ID_SEQUENCE.nextval as ID FROM DUAL";
@@ -96,7 +93,7 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
             statement.setString(3, instructor.getLastname());
             statement.setDate(4, Date.valueOf(instructor.getDob()));
             statement.setString(5, instructor.getEmail());
-
+            //da controllare l'aggiunta dei settori
             statement.execute();
             long idSector;
             for(Sector s : specialization){
@@ -144,9 +141,9 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
     }
     private List<Sector> getSpecialization (long id) throws SQLException {
         String query = "SELECT S.SNAME FROM INSTRUCTOR I " +
-                            "JOIN INSTRUCTOR_SECTOR IS_S ON (IS_S.INSTRUCTOR_ID = I.ID)" +
-                                "JOIN SECTOR S ON (IS_S.SECTOR_ID = S.ID)" +
-                        "WHERE I.ID = " + id;
+                "JOIN INSTRUCTOR_SECTOR IS_S ON (IS_S.INSTRUCTOR_ID = I.ID) " +
+                "JOIN SECTOR S ON (IS_S.SECTOR_ID = S.ID) " +
+                "WHERE I.ID = " + id;
         List<Sector> sectors = new ArrayList<>();
         try (
                 Statement s = this.conn.createStatement();
@@ -178,7 +175,7 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
 
     @Override
     public Optional<Instructor> findById(long instructorId) {
-        String query = "SELECT SNAME, SURNAME, DOB, EMAIL" +
+        String query = "SELECT SNAME, SURNAME, DOB, EMAIL " +
                        "FROM INSTRUCTOR " +
                        "WHERE ID = ?";
         try (
@@ -204,12 +201,12 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
 
     @Override
     public Iterable<Instructor> findOlderThanGivenAgeAndMoreThanOneSpecialization(int age) {
-        String query = "SELECT I.ID, I.SNAME, I.SURNAME, I.DOB, I.EMAIL COUNT(S.SNAME) AS COUNTER" +
+        String query = "SELECT I.ID, I.SNAME, I.SURNAME, I.DOB, I.EMAIL COUNT(S.SNAME) AS COUNTER " +
                 "FROM INSTRUCTOR I " +
-                "JOIN INSTRUCTOR_SECTOR IS_S ON (IS_S.INSTRUCTOR_ID = I.ID)" +
-                "JOIN SECTOR S ON (IS_S.SECTOR_ID = S.ID)" +
-                "WHERE EXTRACT(YEAR FROM I.DOB) < ?" +
-                "GROUP BY I.ID, I.SNAME, I.SURNAME, I.DOB, I.EMAIL" +
+                "JOIN INSTRUCTOR_SECTOR IS_S ON (IS_S.INSTRUCTOR_ID = I.ID) " +
+                "JOIN SECTOR S ON (IS_S.SECTOR_ID = S.ID) " +
+                "WHERE EXTRACT(YEAR FROM I.DOB) < ? " +
+                "GROUP BY I.ID, I.SNAME, I.SURNAME, I.DOB, I.EMAIL " +
                 "HAVING COUNT(S.SNAME) > 1";
         List<Instructor> instructors = new ArrayList<>();
         try (
@@ -229,7 +226,7 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return instructors;
     }
 
     @Override
@@ -239,15 +236,15 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
 
         List<Sector> sectors = i.getSpecialization();
         String query =
-                "UPDATE INSTRUCTOR I" +
+                "UPDATE INSTRUCTOR I " +
                 "SET I.SNAME = ?, I.SURNAME = ?, I.DOB = ?, I.EMAIL = ? " +
                 "WHERE I.ID = ? "; //? = 5
 
-        String query2 = "SELECT S.SNAME" +
-                "FROM INSTRUCTOR I JOIN INSTRUCTOR_SECTOR IN_S" +
-                "ON (I.ID = IN_S.INSTRUCTOR_ID)" +
-                "JOIN SECTOR S" +
-                "ON (S.ID = IN_S.SECTOR_ID)" +
+        String query2 = "SELECT S.SNAME " +
+                "FROM INSTRUCTOR I JOIN INSTRUCTOR_SECTOR IN_S " +
+                "ON (I.ID = IN_S.INSTRUCTOR_ID) " +
+                "JOIN SECTOR S " +
+                "ON (S.ID = IN_S.SECTOR_ID) " +
                 "WHERE I.ID = " + idInstr;
 
         try (
@@ -269,17 +266,16 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
                 array.add(rs.getString(1));
             }
 
+            //aggiunta dei settori "nuovi" da aggiungere
             for (Sector s1 : sectors) {
-                if(array.contains(s1.name())){
-                    //non fare niente
-                }else{
+                if(!array.contains(s1.name())){
                     long idSector = getIDfromNameSector(s1.name());
                     addSector(idSector, idInstr);
-                    //aggiungi all'istruttore
                 }
             }
             //sector : settori nuovi (da "aggiornare")
             //array : settori vecchi
+            //cancellazione dei settori "vecchi" non più associati all'istruttore
             for (String a : array) {
                 Sector sec = Sector.valueOf(a);
                 if(!sectors.contains(sec)){
@@ -287,19 +283,18 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
                     deleteSector(idSector, idInstr);
                 }
             }
-            //cancellazione
-
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return false;
+        //da sistemare il return
+        return true;
     }
 
     private void deleteSector(long idSector, long idInstr) {
-        String query = "DELETE FROM INSTRUCTOR_SECTOR" +
-                        "WHERE INSTRUCTOR_ID = ?" +
-                        "AND SECTOR_ID = ?;";
+        String query = "DELETE FROM INSTRUCTOR_SECTOR " +
+                        "WHERE INSTRUCTOR_ID = ? " +
+                        "AND SECTOR_ID = ? ";
         try(
                 PreparedStatement statement = this.conn.prepareStatement(query);
                 ){
@@ -315,7 +310,7 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
 
 
     private void addSector(long idSector, long idInstructor) {
-        String query = "INSERT INTO INSTRUCTOR_SECTOR (ID, INSTRUCTOR_ID, SECTOR_ID)" +
+        String query = "INSERT INTO INSTRUCTOR_SECTOR (ID, INSTRUCTOR_ID, SECTOR_ID) " +
                 "VALUES (?, ?, ?)";
         String idQuery = "SELECT INSTR_SPEC_ID_SEQUENCE.nextval as ID FROM DUAL";
 
@@ -337,7 +332,7 @@ public class JdbcInstructorRepository extends JdbcRepository implements Instruct
     }
 
     private long getIDfromNameSector(String name) {
-        String query = "SELECT ID" +
+        String query = "SELECT ID " +
                 "FROM SECTOR " +
                 "WHERE SNAME = ?";
         try (
